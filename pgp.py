@@ -14,26 +14,17 @@ key.add_uid(uid, usage={KeyFlags.Sign, KeyFlags.EncryptCommunications, KeyFlags.
             ciphers=[SymmetricKeyAlgorithm.AES256, SymmetricKeyAlgorithm.AES192, SymmetricKeyAlgorithm.AES128],
             compression=[CompressionAlgorithm.ZLIB, CompressionAlgorithm.BZ2, CompressionAlgorithm.ZIP, CompressionAlgorithm.Uncompressed],
 			key_expires=timedelta(days=365))
-#print("Private primary key before adding subkey")
-#print(key)
-#print("Public primary key before adding subkey")
-#print(key.pubkey)
 
 # protect primary private key with passphrase
 key.protect("primary", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
 # generate a sub key.
 subkey = pgpy.PGPKey.new(PubKeyAlgorithm.ECDH, EllipticCurveOID.NIST_P256)
-#print(subkey)
 
 # protect subkey private key with passphraee
 subkey.protect("sub", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
 # preferences that are specific to the subkey can be chosen here
-#print("Private sub key after adding subkey")
-#print(subkey)
-#print("Public sub key after adding subkey")
-#print(subkey.pubkey)
 
 # compressed by default with ZIP DEFLATE
 message = pgpy.PGPMessage.new("This is the new message!")
