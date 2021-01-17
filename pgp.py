@@ -21,6 +21,7 @@ key.protect("primary", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 # generate a sub key.
 subkey = pgpy.PGPKey.new(PubKeyAlgorithm.ECDH, EllipticCurveOID.NIST_P256)
 
+
 # protect subkey private key with passphraee
 subkey.protect("sub", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
@@ -36,10 +37,11 @@ with key.unlock("primary"):
 	message |= key.sign(message)
 	with subkey.unlock("sub"):
 		assert subkey.is_unlocked
-		key.add_subkey(subkey, usage={KeyFlags.Authentication})
+		key.add_subkey(subkey, usage={KeyFlags.EncryptCommunications})
 		subkey.pubkey |= key.certify(subkey.pubkey)
 	assert subkey.is_unlocked is False
 assert key.is_unlocked is False
 
 encrypted_message = subkey.pubkey.encrypt(message)
 key.pubkey.verify(message)
+decrypted_message = encrypted_message.decrypt
