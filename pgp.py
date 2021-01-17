@@ -40,3 +40,6 @@ with key.unlock("primary"):
 		subkey.pubkey |= key.certify(subkey.pubkey)
 	assert subkey.is_unlocked is False
 assert key.is_unlocked is False
+
+encrypted_message = subkey.pubkey.encrypt(message)
+key.pubkey.verify(message)
