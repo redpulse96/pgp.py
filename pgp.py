@@ -32,20 +32,19 @@ message = pgpy.PGPMessage.new("This is the new message!")
 
 #sign key and message
 with key.unlock("primary"):
-	assert key.is_unlocked
 	sig = key.sign(message)
 	message |= key.sign(message)
 	with subkey.unlock("sub"):
-		assert subkey.is_unlocked
 		key.add_subkey(subkey, usage={KeyFlags.EncryptCommunications})
 		subkey.pubkey |= key.certify(subkey.pubkey)
-	assert subkey.is_unlocked is False
-assert key.is_unlocked is False
+		key.protect("key", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
+#subkey.protect("key",SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 encrypted_message = subkey.pubkey.encrypt(message)
 print(encrypted_message)
 key.pubkey.verify(message)
-with subkey.unlock("sub"):
-	assert subkey.is_unlocked
-	decrypted_message = subkey.decrypt(encrypted_message)
-	print(decrypted_message)
+with key.unlock("key"):
+	with subkey.unlock("key"):
+		assert subkey.is_unlocked
+		decrypted_message = subkey.decrypt(encrypted_message)
+		print(decrypted_message)
