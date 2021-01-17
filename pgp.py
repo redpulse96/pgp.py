@@ -14,35 +14,37 @@ key.add_uid(uid, usage={KeyFlags.Sign, KeyFlags.EncryptCommunications, KeyFlags.
             ciphers=[SymmetricKeyAlgorithm.AES256, SymmetricKeyAlgorithm.AES192, SymmetricKeyAlgorithm.AES128],
             compression=[CompressionAlgorithm.ZLIB, CompressionAlgorithm.BZ2, CompressionAlgorithm.ZIP, CompressionAlgorithm.Uncompressed],
 			key_expires=timedelta(days=365))
-print("Private primary key before adding subkey")
-print(key)
-print("Public primary key before adding subkey")
-print(key.pubkey)
+#print("Private primary key before adding subkey")
+#print(key)
+#print("Public primary key before adding subkey")
+#print(key.pubkey)
 
 # protect primary private key with passphrase
 key.protect("primary", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
 # generate a sub key.
 subkey = pgpy.PGPKey.new(PubKeyAlgorithm.ECDH, EllipticCurveOID.NIST_P256)
-print(subkey)
+#print(subkey)
 
 # protect subkey private key with passphraee
 subkey.protect("sub", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
 # preferences that are specific to the subkey can be chosen here
-key.add_subkey(subkey, usage={KeyFlags.Authentication})
-print("Private sub key after adding subkey")
-print(subkey)
-print("Public sub key after adding subkey")
-print(subkey.pubkey)
+#print("Private sub key after adding subkey")
+#print(subkey)
+#print("Public sub key after adding subkey")
+#print(subkey.pubkey)
 
 # compressed by default with ZIP DEFLATE
-newMessage = pgpy.PGPMessage.new("This is the new message!")
+message = pgpy.PGPMessage.new("This is the new message!")
 
-#sing key
-with key.unlock(primary):
-	assert key.is_uncloked
-	subkey.pubkey |= key.certify(subkey.pubkey)
-
-#sign message
-
+#sign key and message
+with key.unlock("primary"):
+	assert key.is_unlocked
+	message |= key.sign(message)
+	with subkey.unlock("sub"):
+		assert subkey.is_unlocked
+		key.add_subkey(subkey, usage={KeyFlags.Authentication})
+		subkey.pubkey |= key.certify(subkey.pubkey)
+	assert subkey.is_unlocked is False
+assert key.is_unlocked is False
