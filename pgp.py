@@ -41,6 +41,7 @@ message = pgpy.PGPMessage.new("This is the new message!")
 #sign key and message
 with key.unlock("primary"):
 	assert key.is_unlocked
+	sig = key.sign(message)
 	message |= key.sign(message)
 	with subkey.unlock("sub"):
 		assert subkey.is_unlocked
