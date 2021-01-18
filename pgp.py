@@ -25,8 +25,6 @@ subkey = pgpy.PGPKey.new(PubKeyAlgorithm.ECDH, EllipticCurveOID.NIST_P256)
 # protect subkey private key with passphraee
 subkey.protect("sub", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
-# preferences that are specific to the subkey can be chosen here
-
 # compressed by default with ZIP DEFLATE
 message = pgpy.PGPMessage.new("This is the new message!")
 
