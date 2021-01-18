@@ -39,7 +39,6 @@ with key.unlock("primary"):
 		subkey.pubkey |= key.certify(subkey.pubkey)
 		key.protect("key", SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 
-#subkey.protect("key",SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 encrypted_message = subkey.pubkey.encrypt(message)
 print(encrypted_message)
 key.pubkey.verify(message)
