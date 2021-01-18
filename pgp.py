@@ -43,6 +43,7 @@ encrypted_message = subkey.pubkey.encrypt(message)
 print(encrypted_message)
 key.pubkey.verify(message)
 with key.unlock("key"):
+	assert subkey.is_protected
 	with subkey.unlock("key"):
 		assert subkey.is_unlocked
 		print(message)
